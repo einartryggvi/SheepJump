@@ -1,6 +1,7 @@
 define ['controls'], (controls) ->
   class Player
-    speed: 200
+    speedX: 200
+    speedY: 200
 
     constructor: (el) ->
       @el = el
@@ -10,12 +11,20 @@ define ['controls'], (controls) ->
 
     onFrame: (delta) ->
       if controls.spacePressed
-        @pos.x += delta * @speed
+        @pos.x += delta * @speedX
+        @pos.y += delta * @speedY
 
-      if @pos.x > 200 or @pos.x < 0
-        @speed *= -1
-
+      if @pos.x > 800 or @pos.x < 0
+        @speedX *= -1
+      
+      if @pos.y > 200 or @pos.y < 0
+        @speedY *= -1
+      
       # Update UI
+      if @speedY < 0
+        @el.find('div').find('div').not('.l_eye, .r_eye').css 'background', '#c00'
+      if @speedX < 0
+        @el.find('div').find('div').not('.l_eye, .r_eye').css 'background', '#0cc'
       @el.css '-webkit-transform', "translate(#{@pos.x}px,#{@pos.y}px)"
 
   return Player;
