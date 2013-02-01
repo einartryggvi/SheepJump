@@ -5,7 +5,7 @@ define(['controls'], function (controls) {
 	var PLAYER_SPEED = 300;
 	var JUMP_VELOCITY = 1000;
 	var GRAVITY = 2500;
-	var EDGE_OF_LIFE = 650; // DUM DUM DUM!
+	var COLLISION_EDGE = 40;
 	var extraTransform = '';
 
 	var transform = $.fx.cssPrefix + 'transform';
@@ -15,6 +15,7 @@ define(['controls'], function (controls) {
 		this.game = game;
 		this.pos = { x:0, y:0 };
 		this.vel = { x:0, y:0 };
+		EDGE_OF_LIFE = game.bottom;
 	};
 
 	Player.prototype.onFrame = function (delta) {
@@ -65,7 +66,7 @@ define(['controls'], function (controls) {
 			if (p.rect.y >= oldY && p.rect.y < this.pos.y) {
 
 				// Is our X within platform width
-				if (this.pos.x > p.rect.x && this.pos.x < p.rect.right) {
+				if (this.pos.x > p.rect.x - COLLISION_EDGE && this.pos.x < p.rect.right + COLLISION_EDGE) {
 
 					// Collision. Let's stop gravity.
 					this.pos.y = p.rect.y;
@@ -76,7 +77,7 @@ define(['controls'], function (controls) {
 	};
 
 	Player.prototype.checkGameover = function () {
-		if (this.pos.y > EDGE_OF_LIFE) {
+		if (this.pos.y > this.game.bottom + this.el.height()) {
 			this.game.gameover();
 		}
 	};

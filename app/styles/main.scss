@@ -21,7 +21,7 @@ html, body {
   }
   .enviroment {
 	height: 100%;
-	background: url('images/bg.jpg');
+	background: url('/images/bg.jpg');
 	background-size: auto 100%;
 	.grass {
 	  width: 100%;
@@ -35,27 +35,27 @@ html, body {
 		bottom: 0;
 	  }
 	  .grass-1 {
-		background: url('images/grass1.png') repeat-x left bottom;
+		background: url('/images/grass1.png') repeat-x left bottom;
 		@include animation(move-grass 1s ease 1s infinite alternate);
 		background-size: auto 100%;
 	  }
 	  .grass-2 {
-		background: url('images/grass2.png') repeat-x left bottom;
+		background: url('/images/grass2.png') repeat-x left bottom;
 		@include animation(move-grass 1.1s ease 1.1s infinite alternate);
 		background-size: auto 100%;
 	  }
 	  .grass-3 {
-		background: url('images/grass3.png') repeat-x left bottom;
+		background: url('/images/grass3.png') repeat-x left bottom;
 		@include animation(move-grass 1.2s ease 1.2s infinite alternate);
 		background-size: auto 100%;
 	  }
 	  .grass-4 {
-		background: url('images/grass4.png') repeat-x left bottom;
+		background: url('/images/grass4.png') repeat-x left bottom;
 		@include animation(move-grass 1.3s ease 1.3s infinite alternate);
 		background-size: auto 100%;
 	  }
 	  .grass-5 {
-		background: url('images/grass5.png') repeat-x left bottom;
+		background: url('/images/grass5.png') repeat-x left bottom;
 		background-size: auto 100%;
 		@include animation(move-grass 1.4s ease 1.4s infinite alternate);
 	  }
@@ -72,17 +72,17 @@ html, body {
 		bottom: 0;
 	  }
 	  .clouds-1 {
-		background: url('images/clouds1.png') no-repeat right bottom;
+		background: url('/images/clouds1.png') no-repeat right bottom;
 		@include animation(move-clouds 10s linear 1s infinite alternate);
 		background-size: auto 100%;
 	  }
 	  .clouds-2 {
-		background: url('images/clouds2.png') repeat-x left bottom;
+		background: url('/images/clouds2.png') repeat-x left bottom;
 		@include animation(move-clouds 15s linear 3s infinite alternate);
 		background-size: auto 100%;
 	  }
 	  .clouds-3 {
-		background: url('images/clouds3.png') repeat-x left bottom;
+		background: url('/images/clouds3.png') repeat-x left bottom;
 		@include animation(move-clouds 20s linear 5s infinite alternate);
 		background-size: auto 100%;
 	  }
@@ -97,20 +97,20 @@ html, body {
   @include box-shadow(inset 0 0 2px 2px rgba(51, 25, 18, 0.80));
   @include background-image(linear-gradient(top, rgba(255,255,255,0) 1%, rgba(51, 25, 18, 0.65) 45%,rgba(0,0,0,0) 100%));
 }
-
 .player {
-  width: 160px;
-  height: 142px;
+  width: 150px;
+  height: 133px;
   position: absolute;
   top: 0;
   left: 0;
-  margin-top: -142px;
-  margin-left: -80px;
-  background-image: url('images/sheep_left_open.png');
+  margin-top: -133px;
+  margin-left: -75px;
+  background-image: url('/images/sheep_left_open.png');
   background-repeat: no-repeat;
-  background-size: 160px 142px;
+  background-size: 100%;
+  background-position: center bottom;
   &.closed, .preload {
-	background-image: url('images/sheep_left_closed.png');
+	background-image: url('/images/sheep_left_closed.png');
   }
   .preload {
 	width: 100%;

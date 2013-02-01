@@ -9,11 +9,11 @@ define(['player', 'platform'], function (Player, Platform) {
 	var Game = function (el) {
 		this.el = el;
 		this.platformsEl = el.find('.platforms');
-
+		this.window =  $(window);
 		this.player = new Player(this.el.find('.player'), this);
-		this.platformSize = { w: $(window).width() * 0.2, h: $(window).height() * 0.02}
-		this.bottom = $(window).height();
-
+		this.platformSize = { w: this.window.width() * 0.2, h: this.window.height() * 0.02}
+		this.bottom = this.window.height();
+		console.log(this.bottom);
 		// Cache a bound onFrame since we need it each frame.
 		this.onFrame = this.onFrame.bind(this);
 	};
@@ -100,7 +100,6 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * Stop the game and notify user that he has lost.
 	 */
 	Game.prototype.gameover = function () {
-		return;
 		alert('You are game over!');
 		this.freezeGame();
 
