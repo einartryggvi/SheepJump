@@ -11,9 +11,10 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.platformsEl = el.find('.platforms');
 		this.window =  $(window);
 		this.player = new Player(this.el.find('.player'), this);
+		this.el.addClass('frozen');
 		this.platformSize = { w: this.window.width() * 0.2, h: this.window.height() * 0.02}
 		this.bottom = this.window.height();
-		console.log(this.bottom);
+		this.isPlaying = false;
 		// Cache a bound onFrame since we need it each frame.
 		this.onFrame = this.onFrame.bind(this);
 	};
@@ -80,8 +81,13 @@ define(['player', 'platform'], function (Player, Platform) {
 		}
 
 		var now = +new Date() / 1000,
-			delta = now - this.lastFrame;
+		delta = now - this.lastFrame;
 		this.lastFrame = now;
+
+		if (delta > 1) {
+			this.freezeGame();
+			return;
+		}
 
 		this.player.onFrame(delta);
 
@@ -93,6 +99,7 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * Starts the game.
 	 */
 	Game.prototype.start = function () {
+		this.isPlaying = true;
 		this.reset();
 	};
 
@@ -100,13 +107,8 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * Stop the game and notify user that he has lost.
 	 */
 	Game.prototype.gameover = function () {
-		alert('You are game over!');
+		this.el.children('.gameOver').show();
 		this.freezeGame();
-
-		var game = this;
-		setTimeout(function () {
-			game.reset();
-		}, 0);
 	};
 
 	/**

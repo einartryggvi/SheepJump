@@ -64,10 +64,8 @@ define(['controls'], function (controls) {
 		for (var i = 0, p; p = platforms[i]; i++) {
 			// Are we crossing Y.
 			if (p.rect.y >= oldY && p.rect.y < this.pos.y) {
-
 				// Is our X within platform width
 				if (this.pos.x > p.rect.x - COLLISION_EDGE && this.pos.x < p.rect.right + COLLISION_EDGE) {
-
 					// Collision. Let's stop gravity.
 					this.pos.y = p.rect.y;
 					this.vel.y = 0;
