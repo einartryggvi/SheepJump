@@ -14,7 +14,7 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.el.addClass('frozen');
 		this.bottom = this.window.height();
 		this.lastPlatformPos = { x: 0, y: 0};
-		this.platformSize = { w: this.window.width() * 0.2, h: this.window.height() * 0.02, x: 0 , y: this.bottom}
+		this.platformSize = { w: 250, h: 15, x: 0 , y: this.bottom}
 		this.isPlaying = false;
 		this.platforms = [];
 		// Cache a bound onFrame since we need it each frame.
@@ -50,13 +50,13 @@ define(['player', 'platform'], function (Player, Platform) {
 			width: this.window.width(),
 			height: this.platformSize.h
 		}));
+		this.lastPlatformPos.x = -this.platformSize.w;
 		for (var i = 1; i < 100; i++) {
-			var rand = this.getRandom(40, this.window.width() - this.platformSize.w-40);
-			if (rand > this.lastPlatformPos.x + 40) {
-				this.lastPlatformPos.x = rand % 40;
-				console.log(this.lastPlatformPos.x);
+			this.lastPlatformPos.x += (this.platformSize.w - 10);
+			if (this.lastPlatformPos.x > this.window.height()) {
+				this.lastPlatformPos.x %= this.window.height();
 			}
-			this.lastPlatformPos.x = rand;
+			console.log('Window = ' + this.window.height() + ' - x = ' + this.lastPlatformPos.x);
 			this.lastPlatformPos.y -= 180;
 			this.addPlatform(new Platform({
 				x: this.lastPlatformPos.x,

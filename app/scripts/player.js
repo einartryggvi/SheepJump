@@ -2,7 +2,7 @@
 
 define(['controls'], function (controls) {
 
-	var PLAYER_SPEED = 300;
+	var PLAYER_SPEED = 500;
 	var JUMP_VELOCITY = 1000;
 	var GRAVITY = 2500;
 	var COLLISION_EDGE = 40;
@@ -28,6 +28,7 @@ define(['controls'], function (controls) {
 			this.vel.x = 0;
 		}
 
+		JUMP_VELOCITY += delta * 3;
 		// Jump
 		if (/*controls.keys.space && */this.vel.y === 0) {
 			this.vel.y = -JUMP_VELOCITY;
