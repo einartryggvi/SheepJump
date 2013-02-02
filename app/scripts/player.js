@@ -75,7 +75,7 @@ define(['controls'], function (controls) {
 	};
 
 	Player.prototype.checkGameover = function () {
-		if (this.pos.y > this.game.bottom + this.el.height()) {
+		if (this.pos.y > this.game.bottom + COLLISION_EDGE) {
 			this.game.gameover();
 		}
 	};

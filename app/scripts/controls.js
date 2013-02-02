@@ -1,7 +1,6 @@
 /*global define, $ */
 
 define([], function () {
-
 	var KEYS = {
 		32:'space',
 		37:'left',
@@ -66,7 +65,6 @@ define([], function () {
 			touchPrevX = e.pageX;
 		}
 	};
-
 	// Export singleton.
 	return new Controls();
 });

@@ -6,6 +6,13 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: 'Fruktur', cursive;
+  ::selection {
+	color: #04b400;
+  }
+  ::-moz-selection {
+	color: #04b400;
+  }
 }
 
 .container {
@@ -18,19 +25,67 @@ html, body {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	.gameOver {
-	  display: none;
-	  width: 500px;
-	  height: 200px;
-	  background: red;
+	.pause {
+	  background: rgba(0,0,0,0.3);
+	  width: 100%;
+	  height: 100%;
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	}
+  	.playButton {
+	  background: url('/images/play.png') no-repeat;
+	  width: 385px;
+	  height: 385px;
 	  position: absolute;
 	  top: 50%;
 	  left: 50%;
-	  margin-left: -250px;
-	  margin-top: -100px;
+	  margin-top: -192px;
+	  margin-left: -192px;
+	  cursor: pointer;
+	  background-size: auto 100%;
+	  &:active {
+		@include transform(scale(.9));
+	  }
 	}
-	.pause {
+	.score {
+	  background: rgba(255,255,255,0.7);
+	  width: 150px;
+	  height: 40px;
+	  position: absolute;
+	  top: 0;
+	  left: 0;
 	  display: none;
+	  color: #fff;
+	  font-size: 26px;
+	  text-align: center;;
+	}
+	.gameOver {
+	  display: none;
+	  width: 800px;
+	  height: 500px;
+	  background: rgba(22, 77, 222, 0.77);
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  margin-left: -400px;
+	  margin-top: -250px;
+	  text-align: center;
+	  font-weight: bold;
+	  font-size: 70px;
+	  text-transform: uppercase;
+	  color: #fff;
+	  border: 2px solid white;
+	  padding: 65px;
+	  @include box-sizing(border-box);
+	  @include box-shadow(0 0 3px 3px rgba(0, 0, 0, 0.50));
+	  .playButton {
+		width: 200px;
+	  	height: 200px;
+		top: 200px;
+		margin-top: 0;
+	 	margin-left: -100px;
+	  }
 	}
    .enviroment {
 	  height: 100%;
@@ -94,6 +149,7 @@ html, body {
 		}
 	  }
 	&:not(.frozen) {
+	  .score { display: block; }
 	  .grass-1 {
 		@include animation(move-grass 1s ease 1s infinite alternate);
 	  }
@@ -129,6 +185,7 @@ html, body {
   @include box-shadow(inset 0 0 2px 2px rgba(51, 25, 18, 0.80));
   @include background-image(linear-gradient(top, rgba(255,255,255,0) 1%, rgba(51, 25, 18, 0.65) 45%,rgba(0,0,0,0) 100%));
 }
+.game.frozen .player {display:  none;}
 .player {
   width: 150px;
   height: 133px;
