@@ -19,189 +19,215 @@ html, body {
 	position: relative;
 	width: 100%;
 	height: 500px;
-	.game {
+}
+/************************
+ * Game
+ ************************/
+.game {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 1300px;
+	height: 731px;
+	margin-top: -365px;
+	margin-left: -650px;
+	/************************
+	 * Player
+	 ************************/
+	.player {
+		width: 150px;
+		height: 133px;
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100%;
-		height: 100%;
-		.pause {
-			background: rgba(0, 0, 0, 0.3);
+		margin-top: -133px;
+		margin-left: -75px;
+		background-image: url('/images/sheep_left_open.png');
+		background-repeat: no-repeat;
+		background-size: cover;
+		&.closed, .preload {
+			background-image: url('/images/sheep_left_closed.png');
+		}
+		.frozen & {
+			display: none;
+		}
+		.preload {
 			width: 100%;
 			height: 100%;
 			position: absolute;
-			top: 0;
-			left: 0;
-		}
-		.playButton {
-			background: url('/images/play.png') no-repeat;
-			width: 385px;
-			height: 385px;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			margin-top: -192px;
-			margin-left: -192px;
-			cursor: pointer;
-			background-size: auto 100%;
-			&:active {
-				@include transform(scale(.9));
-			}
-		}
-		.score {
-			background: rgba(255, 255, 255, 0.7);
-			width: 150px;
-			height: 40px;
-			position: absolute;
-			top: 0;
-			left: 0;
-			display: none;
-			color: #fff;
-			font-size: 26px;
-			text-align: center;;
-		}
-		.gameOver {
-			display: none;
-			width: 800px;
-			height: 500px;
-			background: rgba(22, 77, 222, 0.77);
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			margin-left: -400px;
-			margin-top: -250px;
-			text-align: center;
-			font-weight: bold;
-			font-size: 70px;
-			text-transform: uppercase;
-			color: #fff;
-			border: 2px solid white;
-			padding: 65px;
-			@include box-sizing(border-box);
-			@include box-shadow(0 0 3px 3px rgba(0, 0, 0, 0.50));
-			.playButton {
-				width: 200px;
-				height: 200px;
-				top: 200px;
-				margin-top: 0;
-				margin-left: -100px;
-			}
-		}
-		.enviroment {
-			height: 100%;
-			background: url('/images/bg.jpg');
-			background-size: auto 100%;
-			.grass {
-				width: 100%;
-				height: 20%;
-				position: absolute;
-				bottom: 0;
-				div {
-					width: 100%;
-					height: 100%;
-					position: absolute;
-					bottom: 0;
-				}
-				.grass-1 {
-					background: url('/images/grass1.png') repeat-x left bottom;
-					background-size: auto 100%;
-					@include animation(move-grass 1s ease 1s infinite alternate);
-				}
-				.grass-2 {
-					background: url('/images/grass2.png') repeat-x left bottom;
-					background-size: auto 100%;
-					@include animation(move-grass 1.1s ease 1.1s infinite alternate);
-				}
-				.grass-3 {
-					background: url('/images/grass3.png') repeat-x left bottom;
-					background-size: auto 100%;
-					@include animation(move-grass 1.2s ease 1.2s infinite alternate);
-				}
-				.grass-4 {
-					background: url('/images/grass4.png') repeat-x left bottom;
-					background-size: auto 100%;
-					@include animation(move-grass 1.3s ease 1.3s infinite alternate);
-				}
-				.grass-5 {
-					background: url('/images/grass5.png') repeat-x left bottom;
-					background-size: auto 100%;
-					@include animation(move-grass 1.4s ease 1.4s infinite alternate);
-				}
-			}
-			.clouds {
-				width: 100%;
-				height: 60%;
-				position: absolute;
-				bottom: 0;
-				div {
-					width: 110%;
-					height: 100%;
-					position: absolute;
-					bottom: 0;
-				}
-				.clouds-1 {
-					background: url('/images/clouds1.png') no-repeat right bottom;
-					background-size: auto 100%;
-					@include animation(move-clouds 10s linear 1s infinite alternate);
-				}
-				.clouds-2 {
-					background: url('/images/clouds2.png') repeat-x left bottom;
-					background-size: auto 100%;
-					@include animation(move-clouds 15s linear 3s infinite alternate);
-				}
-				.clouds-3 {
-					background: url('/images/clouds3.png') repeat-x left bottom;
-					background-size: auto 100%;
-					@include animation(move-clouds 20s linear 5s infinite alternate);
-				}
-			}
-		}
-		&:not(.frozen) {
-			.score {
-				display: block;
-			}
-		}
-		&.frozen {
-			* {
-				@include animation-play-state(paused);
-			}
+			top: -9999px;
+			left: -9999px;
 		}
 	}
 }
 
+/************************
+ * Pause screen
+ ************************/
+.pause {
+	background: rgba(0, 0, 0, 0.3);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.playButton {
+	background: url('/images/play.png') no-repeat;
+	width: 385px;
+	height: 385px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -192px;
+	margin-left: -192px;
+	cursor: pointer;
+	background-size: auto 100%;
+	&:active {
+		@include transform(scale(.9));
+	}
+}
+/************************
+ * Game over screen
+ ************************/
+.gameOver {
+	display: none;
+	width: 800px;
+	height: 500px;
+	background: rgba(22, 77, 222, 0.77);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -400px;
+	margin-top: -250px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 70px;
+	text-transform: uppercase;
+	color: #fff;
+	border: 2px solid white;
+	padding: 65px;
+	@include box-sizing(border-box);
+	@include box-shadow(0 0 3px 3px rgba(0, 0, 0, 0.50));
+	.playButton {
+		width: 200px;
+		height: 200px;
+		top: 200px;
+		margin-top: 0;
+		margin-left: -100px;
+	}
+}
+
+/************************
+ * Score board
+ ************************/
+.scoreBoard {
+	display: none;
+	background: rgba(255, 255, 255, 0.7);
+	width: 150px;
+	height: 40px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: none;
+	color: #fff;
+	font-size: 26px;
+	text-align: center;
+	body:not(.frozen) & {
+		display: block;
+	}
+}
+
+/************************
+ * Enviroment
+ ************************/
+.enviroment {
+	height: 100%;
+	background: url('/images/bg.jpg');
+	background-size: auto 100%;
+	.grass {
+		width: 100%;
+		height: 20%;
+		position: absolute;
+		bottom: 0;
+		div {
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			bottom: 0;
+		}
+		.grass-1 {
+			background: url('/images/grass1.png') repeat-x left bottom;
+			background-size: auto 100%;
+			@include animation(move-grass 1s ease 1s infinite alternate);
+		}
+		.grass-2 {
+			background: url('/images/grass2.png') repeat-x left bottom;
+			background-size: auto 100%;
+			@include animation(move-grass 1.1s ease 1.1s infinite alternate);
+		}
+		.grass-3 {
+			background: url('/images/grass3.png') repeat-x left bottom;
+			background-size: auto 100%;
+			@include animation(move-grass 1.2s ease 1.2s infinite alternate);
+		}
+		.grass-4 {
+			background: url('/images/grass4.png') repeat-x left bottom;
+			background-size: auto 100%;
+			@include animation(move-grass 1.3s ease 1.3s infinite alternate);
+		}
+		.grass-5 {
+			background: url('/images/grass5.png') repeat-x left bottom;
+			background-size: auto 100%;
+			@include animation(move-grass 1.4s ease 1.4s infinite alternate);
+		}
+	}
+	.clouds {
+		width: 100%;
+		height: 60%;
+		position: absolute;
+		bottom: 0;
+		div {
+			width: 110%;
+			height: 100%;
+			position: absolute;
+			bottom: 0;
+		}
+		.clouds-1 {
+			background: url('/images/clouds1.png') no-repeat right bottom;
+			background-size: auto 100%;
+			@include animation(move-clouds 10s linear 1s infinite alternate);
+		}
+		.clouds-2 {
+			background: url('/images/clouds2.png') repeat-x left bottom;
+			background-size: auto 100%;
+			@include animation(move-clouds 15s linear 3s infinite alternate);
+		}
+		.clouds-3 {
+			background: url('/images/clouds3.png') repeat-x left bottom;
+			background-size: auto 100%;
+			@include animation(move-clouds 20s linear 5s infinite alternate);
+		}
+	}
+}
+/*
+&:not(.frozen) {
+	.score {
+		display: block;
+	}
+}
+&.frozen {
+	* {
+		@include animation-play-state(paused);
+	}
+}
+*/
 .platform {
 	background-color: #76481e;
 	position: absolute;
 	@include border-radius(5px);
 	@include box-shadow(inset 0 0 2px 2px rgba(51, 25, 18, 0.80));
 	@include background-image(linear-gradient(top, rgba(255, 255, 255, 0) 1%, rgba(51, 25, 18, 0.65) 45%, rgba(0, 0, 0, 0) 100%));
-}
-
-.game.frozen .player {
-	display: none;
-}
-
-.player {
-	width: 150px;
-	height: 133px;
-	position: absolute;
-	top: 0;
-	left: 0;
-	margin-top: -133px;
-	margin-left: -75px;
-	background-image: url('/images/sheep_left_open.png');
-	background-repeat: no-repeat;
-	background-size: cover;
-	&.closed, .preload {
-		background-image: url('/images/sheep_left_closed.png');
-	}
-	.preload {
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		top: -9999px;
-		left: -9999px;
-	}
 }
 
 @include keyframes(move-grass) {

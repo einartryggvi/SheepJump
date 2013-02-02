@@ -17,6 +17,7 @@ require(['game'], function (Game) {
 				height:win.height()
 			});
 		}
+
 		resizeWindow();
 
 		$(window).on('resize', function (e) {

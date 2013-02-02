@@ -12,11 +12,11 @@ define(function () {
 			width:rect.width,
 			height:rect.height
 		});
-		this.vel = { x:0, y:20 };
+		this.vel = { x:0, y:40 };
 	};
 
 	Platform.prototype.onFrame = function (delta) {
-		this.vel.y += delta * 10;
+		this.vel.y += 0.05;
 		this.rect.y += this.vel.y * delta;
 		this.el.css('top', this.rect.y + 'px');
 	};

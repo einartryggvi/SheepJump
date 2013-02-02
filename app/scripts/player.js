@@ -28,7 +28,8 @@ define(['controls'], function (controls) {
 			this.vel.x = 0;
 		}
 
-		JUMP_VELOCITY += delta * 3;
+		JUMP_VELOCITY += 0.02;
+		GRAVITY += 0.01;
 		// Jump
 		if (/*controls.keys.space && */this.vel.y === 0) {
 			this.vel.y = -JUMP_VELOCITY;
