@@ -2,7 +2,7 @@
 
 define(['controls'], function (controls) {
 
-	var PLAYER_SPEED = 500;
+	var PLAYER_SPEED = 800;
 	var JUMP_VELOCITY = 1000;
 	var GRAVITY = 2500;
 	var COLLISION_EDGE = 40;
@@ -42,6 +42,12 @@ define(['controls'], function (controls) {
 		var oldY = this.pos.y;
 		this.pos.x += this.vel.x * delta;
 		this.pos.y += this.vel.y * delta;
+		if (this.pos.x < 0) {
+			this.pos.x = $(window).width();
+		}
+		else if (this.pos.x > $(window).width()) {
+			this.pos.x = 0 ;
+		}
 
 		// Check collisions
 		this.checkPlatforms(oldY);
@@ -62,22 +68,23 @@ define(['controls'], function (controls) {
 	};
 
 	Player.prototype.checkPlatforms = function (oldY) {
-		var platforms = this.game.platforms;
-		for (var i = 0, p; p = platforms[i]; i++) {
+		var pos = this.pos;
+		var vel = this.vel;
+		this.game.forEachPlatform(function (p) {
 			// Are we crossing Y.
-			if (p.rect.y >= oldY && p.rect.y < this.pos.y) {
+			if (p.rect.y >= oldY && p.rect.y < pos.y) {
 				// Is our X within platform width
-				if (this.pos.x > p.rect.x - COLLISION_EDGE && this.pos.x < p.rect.right + COLLISION_EDGE) {
+				if (pos.x > p.rect.x && pos.x < p.rect.right) {
 					// Collision. Let's stop gravity.
-					this.pos.y = p.rect.y;
-					this.vel.y = 0;
+					pos.y = p.rect.y;
+					vel.y = 0;
 				}
 			}
-		}
+		});
 	};
 
 	Player.prototype.checkGameover = function () {
-		if (this.pos.y > $(window).height() + this.el.height()) {
+		if (this.pos.y-this.game.viewport.y > $(window).height() + this.el.height()) {
 			this.game.gameover();
 		}
 	};

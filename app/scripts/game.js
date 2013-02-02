@@ -1,6 +1,8 @@
 /*global define, alert */
 
 define(['player', 'platform'], function (Player, Platform) {
+	var transform = $.fx.cssPrefix + 'transform';
+	var VIEWPORT_PADDING = 200;
 	/**
 	 * Main game class.
 	 * @param {Element} el DOM element containig the game.
@@ -9,14 +11,14 @@ define(['player', 'platform'], function (Player, Platform) {
 	var Game = function (el) {
 		this.el = el;
 		this.platformsEl = el.find('.platforms');
-		this.window =  $(window);
+		this.window = $(window);
 		this.player = new Player(this.el.find('.player'), this);
 		$('body').addClass('frozen');
 		this.bottom = this.el.height();
-		this.lastPlatformPos = { x: 0, y: 0};
-		this.platformSize = { w: 250, h: 15, x: 0 , y: this.bottom}
+		this.lastPlatformPos = { x:0, y:0};
+		this.platformSize = { w:250, h:15, x:0, y:this.bottom}
 		this.isPlaying = false;
-		this.platforms = [];
+		this.entities = [];
 		// Cache a bound onFrame since we need it each frame.
 		this.onFrame = this.onFrame.bind(this);
 		this.pauseEl = $('.pause');
@@ -25,7 +27,7 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.gameOverEl.find('.playButton').on('click', this.restart.bind(this));
 	};
 
-	Game.prototype.onPlayClick = function(e) {
+	Game.prototype.onPlayClick = function (e) {
 		e.preventDefault();
 		this.unfreezeGame();
 	}
@@ -35,40 +37,53 @@ define(['player', 'platform'], function (Player, Platform) {
 	 */
 	Game.prototype.reset = function () {
 		// Reset platforms.
-		this.platforms = [];
+		this.entities = [];
+		this.lastPlatformPos.y = 0;
 		$('.platforms > *').remove();
+		this.viewport = {x: 0, y: 0, width: 1300, height:731};
 		this.createPlatforms();
-		this.player.pos = {x: 380, y: this.bottom-this.bottom*0.1};
+		this.player.pos = {x:380, y:this.bottom - this.bottom * 0.1};
+	};
+
+	Game.prototype.forEachPlatform = function (fun) {
+		for (var i = 0, e; e = this.entities[i]; i++) {
+			if (e instanceof Platform) {
+				fun(e);
+			}
+		}
 	};
 
 	Game.prototype.createPlatforms = function () {
-		this.lastPlatformPos.y = this.bottom-this.bottom*0.1;
+		this.lastPlatformPos.y = this.bottom - this.bottom * 0.1;
 		// ground
 		this.addPlatform(new Platform({
-			x: 0,
-			y: this.lastPlatformPos.y,
-			width: this.el.width(),
-			height: this.platformSize.h
-		}));
-		this.lastPlatformPos.x = -this.platformSize.w;
+			x:0,
+			y:this.lastPlatformPos.y,
+			width:this.el.width(),
+			height:this.platformSize.h
+		}, this));
 		for (var i = 1; i < 100; i++) {
-			this.lastPlatformPos.x += (this.platformSize.w - 10);
-			if (this.lastPlatformPos.x > this.el.height()) {
-				this.lastPlatformPos.x %= this.el.height();
+			var x = this.getRandom(this.platformSize.w, this.el.width())-this.platformSize.w;
+			if (this.lastPlatformPos.x > x + this.platformSize.w ) {
+				x += this.platformSize.w + 200;
 			}
-			this.lastPlatformPos.y -= 180;
+			else if (this.lastPlatformPos.x < x - this.platformSize.w) {
+				x -= this.platformSize.w - 200;
+			}
+			this.lastPlatformPos.x = x;
+			this.lastPlatformPos.y -= 160;
 			this.addPlatform(new Platform({
-				x: this.lastPlatformPos.x,
-				y: this.lastPlatformPos.y,
-				width: this.platformSize.w,
-				height: this.platformSize.h
-			}));
+				x:this.lastPlatformPos.x,
+				y:this.lastPlatformPos.y,
+				width:this.platformSize.w,
+				height:this.platformSize.h
+			}, this));
 		}
 
 	};
 
 	Game.prototype.addPlatform = function (platform) {
-		this.platforms.push(platform);
+		this.entities.push(platform);
 		this.platformsEl.append(platform.el);
 	};
 
@@ -81,7 +96,7 @@ define(['player', 'platform'], function (Player, Platform) {
 		}
 
 		var now = +new Date() / 1000,
-		delta = now - this.lastFrame;
+			delta = now - this.lastFrame;
 		this.lastFrame = now;
 
 		if (delta > 1) {
@@ -90,9 +105,18 @@ define(['player', 'platform'], function (Player, Platform) {
 		}
 		$('.score').text('20000');
 		this.player.onFrame(delta);
-		for (var i = 0, p; p = this.platforms[i]; i++) {
+		for (var i = 0, p; p = this.entities[i]; i++) {
 			p.onFrame(delta);
 		}
+
+		for (var i = 0, e; e = this.entities[i]; i++) {
+			e.onFrame(delta);
+			if (e.dead) {
+				this.entities.splice(i--, 1);
+			}
+		}
+
+		this.updateViewport();
 
 		// Request next frame.
 		requestAnimFrame(this.onFrame);
@@ -149,6 +173,20 @@ define(['player', 'platform'], function (Player, Platform) {
 			this.lastFrame = +new Date() / 1000;
 			requestAnimFrame(this.onFrame);
 		}
+	};
+
+	Game.prototype.updateViewport = function () {
+		// Find min and max Y for player in world coordinates.
+		var minY = this.viewport.y + VIEWPORT_PADDING;
+
+		// Player position
+		var playerY = this.player.pos.y;
+
+		//Update the viewport if needed.
+		if (playerY < minY) {
+			this.viewport.y = playerY - VIEWPORT_PADDING;
+		}
+		this.el.css(transform, 'translate(0, ' + (-this.viewport.y) + 'px)');
 	};
 
 	Game.prototype.getRandom = function(min, max) {
