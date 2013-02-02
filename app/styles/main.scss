@@ -191,8 +191,7 @@ html, body {
 	margin-left: -75px;
 	background-image: url('/images/sheep_left_open.png');
 	background-repeat: no-repeat;
-	background-size: 100%;
-	background-position: center bottom;
+	background-size: cover;
 	&.closed, .preload {
 		background-image: url('/images/sheep_left_closed.png');
 	}
