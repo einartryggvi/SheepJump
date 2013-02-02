@@ -56,7 +56,6 @@ define(['player', 'platform'], function (Player, Platform) {
 			if (this.lastPlatformPos.x > this.window.height()) {
 				this.lastPlatformPos.x %= this.window.height();
 			}
-			console.log('Window = ' + this.window.height() + ' - x = ' + this.lastPlatformPos.x);
 			this.lastPlatformPos.y -= 180;
 			this.addPlatform(new Platform({
 				x: this.lastPlatformPos.x,
