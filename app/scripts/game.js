@@ -2,7 +2,7 @@
 
 define(['player', 'platform'], function (Player, Platform) {
 	var transform = $.fx.cssPrefix + 'transform';
-	var VIEWPORT_PADDING = 200;
+	var VIEWPORT_PADDING = 300;
 	/**
 	 * Main game class.
 	 * @param {Element} el DOM element containig the game.
@@ -12,8 +12,10 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.el = el;
 		this.platformsEl = el.find('.platforms');
 		this.window = $(window);
+		this.scoreBoard = $('.scoreBoard');
+		this.score = 0;
 		this.player = new Player(this.el.find('.player'), this);
-		$('body').addClass('frozen');
+		this.body = $('body').addClass('frozen');
 		this.bottom = this.el.height();
 		this.lastPlatformPos = { x:0, y:0};
 		this.platformSize = { w:250, h:15, x:0, y:this.bottom}
@@ -43,6 +45,7 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.viewport = {x: 0, y: 0, width: 1300, height:731};
 		this.createPlatforms();
 		this.player.pos = {x:380, y:this.bottom - this.bottom * 0.1};
+		this.updateViewport();
 	};
 
 	Game.prototype.forEachPlatform = function (fun) {
@@ -103,20 +106,20 @@ define(['player', 'platform'], function (Player, Platform) {
 			this.pause();
 			return;
 		}
-		$('.score').text('20000');
+
 		this.player.onFrame(delta);
-		for (var i = 0, p; p = this.entities[i]; i++) {
-			p.onFrame(delta);
-		}
 
 		for (var i = 0, e; e = this.entities[i]; i++) {
 			e.onFrame(delta);
 			if (e.dead) {
 				this.entities.splice(i--, 1);
+				e.el.remove();
 			}
 		}
 
 		this.updateViewport();
+
+		this.scoreBoard.text(this.score);
 
 		// Request next frame.
 		requestAnimFrame(this.onFrame);
@@ -142,6 +145,18 @@ define(['player', 'platform'], function (Player, Platform) {
 	 */
 	Game.prototype.gameover = function () {
 		this.gameOverEl.show();
+		var highScore = 0;
+		if (Modernizr.localstorage) {
+			highScore = localStorage.getItem('sheepjump.highScore') || 0;
+			if (this.score > highScore) {
+				highScore = this.score;
+				localStorage.setItem('sheepjump.highScore', highScore)
+			}
+			console.log(highScore);
+		} else {
+			highScore = this.score;
+		}
+		this.gameOverEl.find('.highscore .data').text(highScore);
 		this.freezeGame();
 	};
 
@@ -156,7 +171,7 @@ define(['player', 'platform'], function (Player, Platform) {
 	 */
 	Game.prototype.freezeGame = function () {
 		this.isPlaying = false;
-		$('body').addClass('frozen');
+		this.body.addClass('frozen');
 	};
 
 	/**
@@ -167,7 +182,7 @@ define(['player', 'platform'], function (Player, Platform) {
 			this.isPlaying = true;
 			this.pauseEl.hide();
 			this.gameOverEl.hide();
-			$('body').removeClass('frozen');
+			this.body.removeClass('frozen');
 
 			// Restart the onFrame loop
 			this.lastFrame = +new Date() / 1000;
@@ -175,18 +190,28 @@ define(['player', 'platform'], function (Player, Platform) {
 		}
 	};
 
-	Game.prototype.updateViewport = function () {
+	Game.prototype.updateViewport = function (delta) {
 		// Find min and max Y for player in world coordinates.
 		var minY = this.viewport.y + VIEWPORT_PADDING;
+		var maxY = this.viewport.y + this.viewport.height - VIEWPORT_PADDING;
 
 		// Player position
 		var playerY = this.player.pos.y;
+
+		this.viewport.y -= 1;
+
 
 		//Update the viewport if needed.
 		if (playerY < minY) {
 			this.viewport.y = playerY - VIEWPORT_PADDING;
 		}
-		this.el.css(transform, 'translate(0, ' + (-this.viewport.y) + 'px)');
+		else if (playerY > maxY) {
+			//this.viewport.y = playerY + VIEWPORT_PADDING - this.viewport.height;
+		}
+		this.el.css(transform, 'translate3d(0, ' + (-this.viewport.y) + 'px, 0)');
+
+		// update scoreboard
+		this.score = Math.round(-(this.viewport.y));
 	};
 
 	Game.prototype.getRandom = function(min, max) {

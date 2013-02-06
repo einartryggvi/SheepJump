@@ -1,15 +1,17 @@
 /*global $ define */
 
 define(function () {
+	var transform = $.fx.cssPrefix + 'transform';
 	var Platform = function (rect, game) {
 		this.game = game;
 		this.rect = rect;
 		this.rect.right = rect.x + rect.width;
+		this.dead = false;
 
 		this.el = $('<div class="platform">');
 		this.el.css({
-			left:rect.x,
-			top:rect.y,
+			top: rect.y,
+			left: rect.x,
 			width:rect.width,
 			height:rect.height
 		});
@@ -17,9 +19,9 @@ define(function () {
 	};
 
 	Platform.prototype.onFrame = function (delta) {
-		this.vel.y += 0.01;
-		this.rect.y += this.vel.y * delta;
-		this.el.css('top', this.rect.y + 'px');
+		if (this.rect.y > this.game.viewport.y + this.game.viewport.height) {
+			this.dead = true;
+		}
 	};
 
 	// Collision?
