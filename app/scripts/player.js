@@ -46,7 +46,7 @@ define(['controls'], function (controls) {
 			this.pos.x = this.game.viewport.width;
 		}
 		else if (this.pos.x > this.game.viewport.width) {
-			this.pos.x = 0 ;
+			this.pos.x = 0;
 		}
 
 		// Check collisions
@@ -73,11 +73,11 @@ define(['controls'], function (controls) {
 		var vel = this.vel;
 		this.game.forEachPlatform(function (p) {
 			// Are we crossing Y.
-			if (p.rect.y >= oldY && p.rect.y < pos.y) {
+			if (p.config.y >= oldY && p.config.y < pos.y) {
 				// Is our X within platform width
-				if (pos.x + COLLISION_EDGE > p.rect.x && pos.x - COLLISION_EDGE < p.rect.right) {
+				if (pos.x + COLLISION_EDGE > p.config.x && pos.x - COLLISION_EDGE < p.config.right) {
 					// Collision. Let's stop gravity.
-					pos.y = p.rect.y;
+					pos.y = p.config.y;
 					vel.y = 0;
 				}
 			}

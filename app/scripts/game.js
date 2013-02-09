@@ -8,8 +8,10 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * @param {Element} el DOM element containig the game.
 	 * @constructor
 	 */
-	var Game = function (el) {
+	var Game = function (el, levels) {
 		this.el = el;
+		this.levels = levels;
+		this.currentLevel = this.levels[1];
 		this.platformsEl = el.find('.platforms');
 		this.window = $(window);
 		this.scoreBoard = $('.scoreBoard');
@@ -18,7 +20,6 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.body = $('body').addClass('frozen');
 		this.bottom = this.el.height();
 		this.lastPlatformPos = { x:0, y:0};
-		this.platformSize = { w:250, h:15, x:0, y:this.bottom}
 		this.isPlaying = false;
 		this.entities = [];
 		// Cache a bound onFrame since we need it each frame.
@@ -47,6 +48,7 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * Reset all game state for a new game.
 	 */
 	Game.prototype.reset = function () {
+		this.currentLevel = this.levels[1];
 		// Reset platforms.
 		this.entities = [];
 		this.lastPlatformPos.y = 0;
@@ -57,11 +59,13 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.lastPlatformPos.y = this.bottom - 200;
 		// ground
 		this.addPlatform(new Platform({
-			x:0,
-			y:this.lastPlatformPos.y,
-			width:this.el.width(),
-			height:this.platformSize.h
-		}, { x:0, y:0 }, this));
+			x: 0,
+			y: this.lastPlatformPos.y,
+			width: this.el.width(),
+			height: this.currentLevel.platform.height,
+			background: this.currentLevel.platform.background,
+			velocity :  { x: 0, y: 0 }
+		}, this));
 		this.createPlatforms();
 	};
 
@@ -75,25 +79,27 @@ define(['player', 'platform'], function (Player, Platform) {
 
 	Game.prototype.createPlatforms = function () {
 		for (var i = 1; i < 10; i++) {
-			var x = this.getRandom(this.platformSize.w, this.el.width())-this.platformSize.w;
-			if (this.lastPlatformPos.x > x + this.platformSize.w + 40) {
-				x += this.platformSize.w + 200;
+			var x = this.getRandom(this.currentLevel.platform.width, this.el.width())-this.currentLevel.platform.width;
+			if (this.lastPlatformPos.x > x + this.currentLevel.platform.width + 40) {
+				x += this.currentLevel.platform.width + 200;
 			}
-			else if (this.lastPlatformPos.x < x - this.platformSize.w) {
-				x -= this.platformSize.w - 200;
+			else if (this.lastPlatformPos.x < x - this.currentLevel.platform.width) {
+				x -= this.currentLevel.platform.width - 200;
 			}
 			var velX = 0;
-			if (i % 8 == 0) {
-				velX = -200;
+			if (i % this.currentLevel.platform.moveEach == 0) {
+				velX = this.currentLevel.platform.velocity.x;
 			}
 			this.lastPlatformPos.x = x;
 			this.lastPlatformPos.y -= 160;
 			this.addPlatform(new Platform({
 				x: this.lastPlatformPos.x,
 				y: this.lastPlatformPos.y,
-				width: this.platformSize.w,
-				height: this.platformSize.h
-			}, { x: velX, y:0 }, this));
+				width: this.currentLevel.platform.width,
+				height: this.currentLevel.platform.height,
+				background: this.currentLevel.platform.background,
+				velocity :  { x: velX, y: 0 }
+			}, this));
 		}
 
 	};
@@ -128,13 +134,27 @@ define(['player', 'platform'], function (Player, Platform) {
 				this.entities.splice(i--, 1);
 				e.el.remove();
 			}
+			else {
+				e.updateConfig(this.currentLevel);
+			}
 		}
 		if (this.entities.length < 10) {
 			this.createPlatforms();
 		}
 
 		this.updateViewport();
-
+		if (this.score > 2000) {
+			this.currentLevel = this.levels[2];
+		}
+		if (this.score > 4000) {
+			this.currentLevel = this.levels[3];
+		}
+		if (this.score > 6000) {
+			this.currentLevel = this.levels[4];
+		}
+		if (this.score > 8000) {
+			this.currentLevel = this.levels[5];
+		}
 		this.scoreBoard.text(this.score);
 
 		// Request next frame.
@@ -160,7 +180,7 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * Stop the game and notify user that he has lost.
 	 */
 	Game.prototype.gameover = function () {
-		this.sound.play();
+		//this.sound.play();
 		this.gameOverEl.show();
 		var highScore = 0;
 		if (Modernizr.localstorage) {
@@ -200,7 +220,7 @@ define(['player', 'platform'], function (Player, Platform) {
 			this.pauseEl.hide();
 			this.gameOverEl.hide();
 			this.body.removeClass('frozen');
-			this.music.play();
+			//this.music.play();
 
 			// Restart the onFrame loop
 			this.lastFrame = +new Date() / 1000;
@@ -216,8 +236,7 @@ define(['player', 'platform'], function (Player, Platform) {
 		// Player position
 		var playerY = this.player.pos.y;
 
-		this.viewport.y -= 1;
-
+		this.viewport.y -= this.currentLevel.viewport.velocity.y;
 
 		//Update the viewport if needed.
 		if (playerY < minY) {

@@ -225,13 +225,13 @@ body.frozen {
 }
 
 .platform {
-	background-color: #76481e;
 	position: absolute;
 	top: 0;
 	left: 0;
 	@include border-radius(5px);
 	@include box-shadow(inset 0 0 2px 2px rgba(51, 25, 18, 0.80));
 	@include background-image(linear-gradient(top, rgba(255, 255, 255, 0) 1%, rgba(51, 25, 18, 0.65) 45%, rgba(0, 0, 0, 0) 100%));
+	@include transition(background-color 3s, width 3s);
 }
 
 @include keyframes(move-grass) {
