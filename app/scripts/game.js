@@ -1,8 +1,8 @@
-/*global define, alert */
+/*global define, alert, Howl */
 
 define(['player', 'platform'], function (Player, Platform) {
 	var transform = $.fx.cssPrefix + 'transform';
-	var VIEWPORT_PADDING = 300;
+	var VIEWPORT_PADDING = 200;
 	/**
 	 * Main game class.
 	 * @param {Element} el DOM element containig the game.
@@ -27,6 +27,15 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.pauseEl.find('.playButton').on('click', this.unfreezeGame.bind(this));
 		this.gameOverEl = $('.gameOver');
 		this.gameOverEl.find('.playButton').on('click', this.restart.bind(this));
+
+		this.music = new Howl({
+			urls:['sounds/main.mp3'],
+			loop: true
+		});
+
+		this.sound = new Howl({
+			urls:['sounds/sheep.mp3']
+		});
 	};
 
 	Game.prototype.onPlayClick = function (e) {
@@ -43,9 +52,17 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.lastPlatformPos.y = 0;
 		$('.platforms > *').remove();
 		this.viewport = {x: 0, y: 0, width: 1300, height:731};
-		this.createPlatforms();
-		this.player.pos = {x:380, y:this.bottom - this.bottom * 0.1};
+		this.player.pos = {x:380, y:this.bottom - 200};
 		this.updateViewport();
+		this.lastPlatformPos.y = this.bottom - 200;
+		// ground
+		this.addPlatform(new Platform({
+			x:0,
+			y:this.lastPlatformPos.y,
+			width:this.el.width(),
+			height:this.platformSize.h
+		}, { x:0, y:0 }, this));
+		this.createPlatforms();
 	};
 
 	Game.prototype.forEachPlatform = function (fun) {
@@ -57,30 +74,26 @@ define(['player', 'platform'], function (Player, Platform) {
 	};
 
 	Game.prototype.createPlatforms = function () {
-		this.lastPlatformPos.y = this.bottom - this.bottom * 0.1;
-		// ground
-		this.addPlatform(new Platform({
-			x:0,
-			y:this.lastPlatformPos.y,
-			width:this.el.width(),
-			height:this.platformSize.h
-		}, this));
-		for (var i = 1; i < 100; i++) {
+		for (var i = 1; i < 10; i++) {
 			var x = this.getRandom(this.platformSize.w, this.el.width())-this.platformSize.w;
-			if (this.lastPlatformPos.x > x + this.platformSize.w ) {
+			if (this.lastPlatformPos.x > x + this.platformSize.w + 40) {
 				x += this.platformSize.w + 200;
 			}
 			else if (this.lastPlatformPos.x < x - this.platformSize.w) {
 				x -= this.platformSize.w - 200;
 			}
+			var velX = 0;
+			if (i % 8 == 0) {
+				velX = -200;
+			}
 			this.lastPlatformPos.x = x;
 			this.lastPlatformPos.y -= 160;
 			this.addPlatform(new Platform({
-				x:this.lastPlatformPos.x,
-				y:this.lastPlatformPos.y,
-				width:this.platformSize.w,
-				height:this.platformSize.h
-			}, this));
+				x: this.lastPlatformPos.x,
+				y: this.lastPlatformPos.y,
+				width: this.platformSize.w,
+				height: this.platformSize.h
+			}, { x: velX, y:0 }, this));
 		}
 
 	};
@@ -116,6 +129,9 @@ define(['player', 'platform'], function (Player, Platform) {
 				e.el.remove();
 			}
 		}
+		if (this.entities.length < 10) {
+			this.createPlatforms();
+		}
 
 		this.updateViewport();
 
@@ -144,6 +160,7 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * Stop the game and notify user that he has lost.
 	 */
 	Game.prototype.gameover = function () {
+		this.sound.play();
 		this.gameOverEl.show();
 		var highScore = 0;
 		if (Modernizr.localstorage) {
@@ -152,7 +169,6 @@ define(['player', 'platform'], function (Player, Platform) {
 				highScore = this.score;
 				localStorage.setItem('sheepjump.highScore', highScore)
 			}
-			console.log(highScore);
 		} else {
 			highScore = this.score;
 		}
@@ -172,6 +188,7 @@ define(['player', 'platform'], function (Player, Platform) {
 	Game.prototype.freezeGame = function () {
 		this.isPlaying = false;
 		this.body.addClass('frozen');
+		this.music.stop();
 	};
 
 	/**
@@ -183,6 +200,7 @@ define(['player', 'platform'], function (Player, Platform) {
 			this.pauseEl.hide();
 			this.gameOverEl.hide();
 			this.body.removeClass('frozen');
+			this.music.play();
 
 			// Restart the onFrame loop
 			this.lastFrame = +new Date() / 1000;

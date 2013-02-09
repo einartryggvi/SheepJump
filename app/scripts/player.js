@@ -68,6 +68,7 @@ define(['controls'], function (controls) {
 	};
 
 	Player.prototype.checkPlatforms = function (oldY) {
+		var self = this;
 		var pos = this.pos;
 		var vel = this.vel;
 		this.game.forEachPlatform(function (p) {
