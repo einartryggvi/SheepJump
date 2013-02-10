@@ -191,26 +191,31 @@ html, body {
 			background: url('/images/grass1.png') repeat-x left bottom;
 			background-size: auto 100%;
 			@include animation(move-grass 1s ease 1s infinite alternate);
+			margin-top: 1px;
 		}
 		.grass-2 {
 			background: url('/images/grass2.png') repeat-x left bottom;
 			background-size: auto 100%;
 			@include animation(move-grass 1.1s ease 1.1s infinite alternate);
+			margin-top: 2px;
 		}
 		.grass-3 {
 			background: url('/images/grass3.png') repeat-x left bottom;
 			background-size: auto 100%;
 			@include animation(move-grass 1.2s ease 1.2s infinite alternate);
+			margin-top: 3px;
 		}
 		.grass-4 {
 			background: url('/images/grass4.png') repeat-x left bottom;
 			background-size: auto 100%;
 			@include animation(move-grass 1.3s ease 1.3s infinite alternate);
+			margin-top: 4px;
 		}
 		.grass-5 {
 			background: url('/images/grass5.png') repeat-x left bottom;
 			background-size: auto 100%;
 			@include animation(move-grass 1.4s ease 1.4s infinite alternate);
+			margin-top: 5px;
 		}
 	}
 	.clouds {
