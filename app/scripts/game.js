@@ -15,8 +15,10 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.platformsEl = el.find('.platforms');
 		this.window = $(window);
 		this.scoreBoard = $('.scoreBoard');
+		this.scoreBoard.find('.soundIcon').on('click', this.toggleAudio.bind(this));
+		this.scoreBoard.find('.pauseIcon').on('click', this.pause.bind(this));
 		this.score = 0;
-		this.player = new Player(this.el.find('.player'), this);
+		this.player = new Player(this.el.find('.player'), this, this.currentLevel.player);
 		this.body = $('body').addClass('frozen');
 		this.bottom = this.el.height();
 		this.lastPlatformPos = { x:0, y:0};
@@ -29,6 +31,8 @@ define(['player', 'platform'], function (Player, Platform) {
 		this.gameOverEl = $('.gameOver');
 		this.gameOverEl.find('.playButton').on('click', this.restart.bind(this));
 
+		this.playAudio = true;
+
 		this.music = new Howl({
 			urls:['sounds/main.mp3'],
 			loop: true
@@ -38,11 +42,6 @@ define(['player', 'platform'], function (Player, Platform) {
 			urls:['sounds/sheep.mp3']
 		});
 	};
-
-	Game.prototype.onPlayClick = function (e) {
-		e.preventDefault();
-		this.unfreezeGame();
-	}
 
 	/**
 	 * Reset all game state for a new game.
@@ -87,8 +86,16 @@ define(['player', 'platform'], function (Player, Platform) {
 				x -= this.currentLevel.platform.width - 200;
 			}
 			var velX = 0;
+			var power = false;
+			var background = this.currentLevel.platform.background;
 			if (i % this.currentLevel.platform.moveEach == 0) {
 				velX = this.currentLevel.platform.velocity.x;
+			}
+			if (this.currentLevel.platform.power) {
+				if (i % this.currentLevel.platform.power.each == 0) {
+					background = this.currentLevel.platform.power.background;
+					power = true;
+				}
 			}
 			this.lastPlatformPos.x = x;
 			this.lastPlatformPos.y -= 160;
@@ -97,8 +104,9 @@ define(['player', 'platform'], function (Player, Platform) {
 				y: this.lastPlatformPos.y,
 				width: this.currentLevel.platform.width,
 				height: this.currentLevel.platform.height,
-				background: this.currentLevel.platform.background,
-				velocity :  { x: velX, y: 0 }
+				background: background,
+				velocity :  { x: velX, y: 0 },
+				power : power
 			}, this));
 		}
 
@@ -134,28 +142,26 @@ define(['player', 'platform'], function (Player, Platform) {
 				this.entities.splice(i--, 1);
 				e.el.remove();
 			}
-			else {
-				e.updateConfig(this.currentLevel);
-			}
 		}
 		if (this.entities.length < 10) {
 			this.createPlatforms();
 		}
 
 		this.updateViewport();
-		if (this.score > 2000) {
+		if (this.score > 2000 && this.score < 2010) {
 			this.currentLevel = this.levels[2];
 		}
-		if (this.score > 4000) {
+		else if (this.score > 4000 && this.score < 4010) {
 			this.currentLevel = this.levels[3];
 		}
-		if (this.score > 6000) {
+		else if (this.score > 6000 && this.score < 6010) {
 			this.currentLevel = this.levels[4];
 		}
-		if (this.score > 8000) {
+		else if (this.score > 8000 && this.score < 8010) {
 			this.currentLevel = this.levels[5];
 		}
-		this.scoreBoard.text(this.score);
+		this.player.updateConfig(this.currentLevel.player);
+		this.scoreBoard.find('.score .data').text(this.score);
 
 		// Request next frame.
 		requestAnimFrame(this.onFrame);
@@ -180,7 +186,9 @@ define(['player', 'platform'], function (Player, Platform) {
 	 * Stop the game and notify user that he has lost.
 	 */
 	Game.prototype.gameover = function () {
-		//this.sound.play();
+		if(this.playAudio) {
+			this.sound.play();
+		}
 		this.gameOverEl.show();
 		var highScore = 0;
 		if (Modernizr.localstorage) {
@@ -220,13 +228,26 @@ define(['player', 'platform'], function (Player, Platform) {
 			this.pauseEl.hide();
 			this.gameOverEl.hide();
 			this.body.removeClass('frozen');
-			//this.music.play();
+			if (this.playAudio) {
+				this.music.play();
+			}
 
 			// Restart the onFrame loop
 			this.lastFrame = +new Date() / 1000;
 			requestAnimFrame(this.onFrame);
 		}
 	};
+
+	Game.prototype.toggleAudio = function() {
+		this.playAudio = (this.playAudio) ? false : true;
+		this.scoreBoard.find('.soundIcon').toggleClass('off');
+		if (this.playAudio) {
+			this.music.play();
+		}
+		else {
+			this.music.stop();
+		}
+	}
 
 	Game.prototype.updateViewport = function (delta) {
 		// Find min and max Y for player in world coordinates.
@@ -241,9 +262,6 @@ define(['player', 'platform'], function (Player, Platform) {
 		//Update the viewport if needed.
 		if (playerY < minY) {
 			this.viewport.y = playerY - VIEWPORT_PADDING;
-		}
-		else if (playerY > maxY) {
-			//this.viewport.y = playerY + VIEWPORT_PADDING - this.viewport.height;
 		}
 		this.el.css(transform, 'translate3d(0, ' + (-this.viewport.y) + 'px, 0)');
 

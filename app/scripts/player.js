@@ -1,42 +1,40 @@
 /*global $ define */
 
 define(['controls'], function (controls) {
-
-	var PLAYER_SPEED = 800;
-	var JUMP_VELOCITY = 1000;
-	var GRAVITY = 2500;
 	var COLLISION_EDGE = 40;
 	var extraTransform = '';
 
 	var transform = $.fx.cssPrefix + 'transform';
 
-	var Player = function (el, game) {
+	var Player = function (el, game, config) {
 		this.el = el;
 		this.game = game;
 		this.pos = { x:0, y:0 };
 		this.vel = { x:0, y:0 };
-		EDGE_OF_LIFE = game.bottom;
+		this.PLAYER_SPEED = config.speed;
+		this.JUMP_VELOCITY = config.jump;
+		this.GRAVITY = config.gravity
 	};
 
 	Player.prototype.onFrame = function (delta) {
 		// Player input
 		if (controls.keys.right) {
-			this.vel.x = PLAYER_SPEED;
-		} else if (controls.keys.left) {
-			this.vel.x = -PLAYER_SPEED;
-		} else {
+			this.vel.x = this.PLAYER_SPEED;
+		}
+		else if (controls.keys.left) {
+			this.vel.x = -this.PLAYER_SPEED;
+		}
+		else {
 			this.vel.x = 0;
 		}
 
-		JUMP_VELOCITY += 0.02;
-		GRAVITY += 0.01;
 		// Jump
 		if (this.vel.y === 0) {
-			this.vel.y = -JUMP_VELOCITY;
+			this.vel.y = -this.JUMP_VELOCITY;
 		}
 
 		// Gravity
-		this.vel.y += GRAVITY * delta;
+		this.vel.y += this.GRAVITY * delta;
 
 		// Update state
 		var oldY = this.pos.y;
@@ -54,8 +52,6 @@ define(['controls'], function (controls) {
 		this.checkGameover();
 
 		// Update UI.
-		this.el.toggleClass('walking', this.vel.x !== 0);
-		this.el.toggleClass('jumping', this.vel.y < 0);
 		if (this.vel.x > 0) {
 			this.el.addClass('right');
 			extraTransform = 'scaleX(-1)';
@@ -64,6 +60,7 @@ define(['controls'], function (controls) {
 			this.el.removeClass('right');
 			extraTransform = 'scaleX(1)';
 		}
+
 		this.el.css(transform, 'translate3d(' + this.pos.x + 'px,' + this.pos.y + 'px, 0) ' + extraTransform);
 	};
 
@@ -78,7 +75,12 @@ define(['controls'], function (controls) {
 				if (pos.x + COLLISION_EDGE > p.config.x && pos.x - COLLISION_EDGE < p.config.right) {
 					// Collision. Let's stop gravity.
 					pos.y = p.config.y;
-					vel.y = 0;
+					if (p.config.power) {
+						vel.y = -1800;
+					}
+					else {
+						vel.y = 0;
+					}
 				}
 			}
 		});
@@ -88,6 +90,12 @@ define(['controls'], function (controls) {
 		if (this.pos.y-this.game.viewport.y > this.game.window.height() + this.el.height()) {
 			this.game.gameover();
 		}
+	};
+
+	Player.prototype.updateConfig = function(config) {
+		this.PLAYER_SPEED = config.speed;
+		this.JUMP_VELOCITY = config.jump;
+		this.GRAVITY = config.gravity;
 	};
 
 	return Player;

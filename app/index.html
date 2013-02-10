@@ -31,7 +31,16 @@
 				<div class="grass-5"></div>
 			</div>
 		</div>
-		<div class="scoreBoard"></div>
+		<div class="scoreBoard">
+			<div class="score">
+				<span class="title">Score:</span>
+				<span class="data"></span>
+			</div>
+			<div class="actions">
+				<div class="pauseIcon"></div>
+				<div class="soundIcon"></div>
+			</div>
+		</div>
         <div class="game">
 			<div class="platforms"></div>
 			<div class="player">
@@ -51,8 +60,8 @@
 		</div>
     </div>
     <!-- build:js scripts/app.js -->
-    <script src="components/zepto/zepto.js"></script>
 	<script src="components/howler.js/howler.js"></script>
+    <script src="components/zepto/zepto.js"></script>
     <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
     <!-- endbuild -->
 </body>
