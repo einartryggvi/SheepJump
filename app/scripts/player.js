@@ -1,10 +1,10 @@
-/*global $ define */
+/*global $ define Modernizr */
 
 define(['controls'], function (controls) {
 	var COLLISION_EDGE = 40;
 	var extraTransform = '';
 
-	var transform = $.fx.cssPrefix + 'transform';
+	var transform = Modernizr.prefixed('transform');
 
 	var Player = function (el, game, config) {
 		this.el = el;

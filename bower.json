@@ -1,0 +1,13 @@
+{
+  "name": "temp",
+  "private": true,
+  "dependencies": {
+    "bootstrap-sass-official": "~3.2.0",
+    "modernizr": "~2.8.2"
+  },
+  "devDependencies": {
+    "howler.js": "~1.1.26",
+    "zepto": "~1.1.6",
+    "requirejs": "~2.1.17"
+  }
+}

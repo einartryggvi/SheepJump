@@ -1,7 +1,7 @@
 /*global $ define */
 
 define(function () {
-	var transform = $.fx.cssPrefix + 'transform';
+	var transform = Modernizr.prefixed('transform');
 	var Platform = function (config, game) {
 		this.game = game;
 		this.config = config;

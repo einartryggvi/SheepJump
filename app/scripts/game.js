@@ -1,7 +1,7 @@
 /*global define, alert, Howl */
 
 define(['player', 'platform'], function (Player, Platform) {
-	var transform = $.fx.cssPrefix + 'transform';
+	var transform = Modernizr.prefixed('transform');
 	var VIEWPORT_PADDING = 200;
 	/**
 	 * Main game class.
@@ -109,7 +109,6 @@ define(['player', 'platform'], function (Player, Platform) {
 				power : power
 			}, this));
 		}
-
 	};
 
 	Game.prototype.addPlatform = function (platform) {
