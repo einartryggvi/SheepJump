@@ -1,7 +1,12 @@
 /*global define, alert, Howl */
 
 define(['player', 'platform'], function (Player, Platform) {
-	var transform = Modernizr.prefixed('transform');
+	var transformPrefixes = {
+		WebkitTransform: '-webkit-transform',
+		MozTransform: '-moz-transform',
+		transform: 'transform'
+	};
+	var transform = transformPrefixes[Modernizr.prefixed('transform')];
 	var VIEWPORT_PADDING = 200;
 	/**
 	 * Main game class.

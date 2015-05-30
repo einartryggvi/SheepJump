@@ -1,7 +1,12 @@
 /*global $ define */
 
 define(function () {
-	var transform = Modernizr.prefixed('transform');
+	var transformPrefixes = {
+		WebkitTransform: '-webkit-transform',
+		MozTransform: '-moz-transform',
+		transform: 'transform'
+	};
+	var transform = transformPrefixes[Modernizr.prefixed('transform')];
 	var Platform = function (config, game) {
 		this.game = game;
 		this.config = config;

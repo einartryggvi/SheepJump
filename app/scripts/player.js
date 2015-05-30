@@ -4,7 +4,12 @@ define(['controls'], function (controls) {
 	var COLLISION_EDGE = 40;
 	var extraTransform = '';
 
-	var transform = Modernizr.prefixed('transform');
+	var transformPrefixes = {
+		WebkitTransform: '-webkit-transform',
+		MozTransform: '-moz-transform',
+		transform: 'transform'
+	};
+	var transform = transformPrefixes[Modernizr.prefixed('transform')];
 
 	var Player = function (el, game, config) {
 		this.el = el;
